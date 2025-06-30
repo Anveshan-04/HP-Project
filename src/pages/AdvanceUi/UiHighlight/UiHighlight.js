@@ -27,10 +27,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Make sure this import is correct for named exports
-import { fetchCustomers } from "C:/Users/Admin/Downloads/AdminHP/src/api.js";
-import { deleteCustomer } from "C:/Users/Admin/Downloads/AdminHP/src/api.js";
-import { updateCustomer } from "C:/Users/Admin/Downloads/AdminHP/src/api.js";
-import { addCustomer } from "C:/Users/Admin/Downloads/AdminHP/src/api.js";
+import {
+  fetchCustomers, addCustomer, updateCustomer, deleteCustomer
+} from "../../../api"; // Adjust the import path as needed
 import axios from "axios";
 const API_URL = "http://localhost:5000"; // Adjust this to your backend URL
 
@@ -196,49 +195,87 @@ const UiHighlight = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSendAdminOtp = async () => {
-    setOtpLoading(true);
-    setOtpError("");
-    setOtpSuccess("");
-    try {
-      const response = await axios.post(`${API_URL}/api/send-otp`, {
-        phone: adminOtpFormik.values.admin_phone_number,
-        // otp: adminOtpFormik.values.otp,
-      });
-      console.log("OTP Send Response:", response.data);
-      console.log("OTP Sent successfully"); // Add this
-      if (response) {
-        setOtpSent(true);
-        setOtpSuccess("OTP sent successfully!");
-        console.log("OTP Sent, otpSent:", true);
-      } else {
-        setOtpError(response.data.error || "Failed to send OTP");
-      }
-    } catch (err) {
-      setOtpError("Network error");
-    }
-    setOtpLoading(false);
-  };
+  // const handleSendAdminOtp = async () => {
+  //   setOtpLoading(true);
+  //   setOtpError("");
+  //   setOtpSuccess("");
+  //   try {
+  //     const response = await axios.post(`${API_URL}/api/send-otp`, {
+  //       phone: adminOtpFormik.values.admin_phone_number,
+  //       // otp: adminOtpFormik.values.otp,
+  //     });
+  //     console.log("OTP Send Response:", response.data);
+  //     console.log("OTP Sent successfully"); // Add this
+  //     if (response) {
+  //       setOtpSent(true);
+  //       setOtpSuccess("OTP sent successfully!");
+  //       console.log("OTP Sent, otpSent:", true);
+  //     } else {
+  //       setOtpError(response.data.error || "Failed to send OTP");
+  //     }
+  //   } catch (err) {
+  //     setOtpError("Network error");
+  //   }
+  //   setOtpLoading(false);
+  // };
 
-  const handleOtpVerification = async () => {
-    setVerifyLoading(true);
-    setOtpError(null);
-    try {
-      const response = await axios.post(`${API_URL}/api/verify-otp`, {
-        phone: adminOtpFormik.values.admin_phone_number,
-        otp: adminOtpFormik.values.otp,
-      });
-      if (response) {
-        setOtpVerified(true);
-        setOtpSuccess("OTP verified! You can now submit.");
-      } else {
-        setOtpError(response.data || "OTP verification failed");
-      }
-    } catch (err) {
-      setOtpError("Otp invalid");
+  // const handleOtpVerification = async () => {
+  //   setVerifyLoading(true);
+  //   setOtpError(null);
+  //   try {
+  //     const response = await axios.post(`${API_URL}/api/verify-otp`, {
+  //       phone: adminOtpFormik.values.admin_phone_number,
+  //       otp: adminOtpFormik.values.otp,
+  //     });
+  //     if (response) {
+  //       setOtpVerified(true);
+  //       setOtpSuccess("OTP verified! You can now submit.");
+  //     } else {
+  //       setOtpError(response.data || "OTP verification failed");
+  //     }
+  //   } catch (err) {
+  //     setOtpError("Otp invalid");
+  //   }
+  //   setVerifyLoading(false);
+  // };
+
+
+
+const handleSendAdminOtp = async () => {
+  setOtpLoading(true);
+  setOtpError("");
+  setOtpSuccess("");
+  try {
+    // Hardcoded: Always assume OTP sent
+    setOtpSent(true);
+    setOtpSuccess("OTP sent successfully!");
+    console.log("OTP Sent, otpSent:", true);
+  } catch (err) {
+    setOtpError("Network error (hardcoded, should not occur)");
+  }
+  setOtpLoading(false);
+};
+
+const handleOtpVerification = async () => {
+  setVerifyLoading(true);
+  setOtpError(null);
+  try {
+    const enteredOtp = adminOtpFormik.values.otp;
+    // Hardcoded: Always accept OTP "123456"
+    if (enteredOtp === "123456") {
+      setOtpVerified(true);
+      setOtpSuccess("OTP verified! You can now submit.");
+    } else {
+      setOtpError("OTP verification failed (wrong OTP)");
     }
-    setVerifyLoading(false);
-  };
+  } catch (err) {
+    setOtpError("OTP invalid (hardcoded, should not occur)");
+  }
+  setVerifyLoading(false);
+};
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

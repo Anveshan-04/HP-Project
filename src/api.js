@@ -90,7 +90,9 @@ export const fetchCustomers = async () => {
  */
 export const addCustomer = async (customerData) => {
     try {
-        const response = await api.post('/api/add_customers', customerData, {
+        // Change this line:
+        const response = await api.post('/add_customers', customerData, {
+        // FROM: const response = await api.post('/api/add_customers', customerData, {
             headers: {
                 ...getAuthHeaders(),
                 'Content-Type': 'application/json',

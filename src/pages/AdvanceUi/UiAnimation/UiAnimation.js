@@ -105,7 +105,7 @@ const UiAnimation = () => {
             last_name: architect.ar_last_name,
             phone_number: architect.ar_phone_number,
             location: architect.ar_location,
-            status: architect.ar_is_active
+            status: architect.ar_status === "active"
               ? "Active"
               : "Inactive",
           }
@@ -216,7 +216,7 @@ const UiAnimation = () => {
     setEditLastName(architect.last_name || '');   // Use ar_last_name
     setEditPhone(architect.phone_number || ''); // Ensure ar_phone_number
     setEditLocation(architect.location || ''); // Ensure ar_location
-    setEditStatus(architect.ar_is_active ? 'Active' : 'Inactive'); // Make sure this is also set
+    setEditStatus(architect.ar_status === 'active' ? 'Active' : 'Inactive'); // Make sure this is also set
     setEditModal(true);
   };
 
@@ -262,7 +262,7 @@ const handleConfirmEdit = async () => {
       ar_phone_number: cleanedPhone,
       ar_location: trimmedLocation,
       ar_is_active: is_active_status, // Boolean status for backend
-      ar_status: editStatus.trim(), // Add ar_status string for backend
+      ar_status: editStatus.trim().toLowerCase(), // Add ar_status string for backend
     };
 
     try {
@@ -337,7 +337,7 @@ const handleConfirmEdit = async () => {
                         <td>
                           {/* Ensure `architect.status` is used, not `architect.ar_Status` */}
                           <Badge color={
-                            architect.ar_status === "active"
+                            architect.status === "Active"
                               ? "success"
                               : "danger"
                           }>

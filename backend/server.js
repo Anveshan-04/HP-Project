@@ -111,14 +111,12 @@ const upload = multer({ storage: storage });
 
 // --- POSTGRES CLIENT (for raw queries) ---
 const client = new Client({
-    user: "postgres",
-    host: "localhost",
-    database: "houzingpartners",
-    password: "Sagar@1",
-    port: 5432,
-  // You mentioned schema: "hp", but typically you'd include the schema in the query
-  // or set it as a search_path for the user. For clarity, I'll include it in queries.
-  // connectionString: process.env.DATABASE_URL, // from .env
+    user: process.env.DB_USER || "postgres", // Use env variable if available
+    host: process.env.DB_HOST || "localhost",       // <--- CHANGE THIS FROM "localhost" TO "db"
+    database: process.env.DB_DATABASE || "houzingpartners", // Use env variable if available
+    password: process.env.DB_PASSWORD || "Sagar@1", // Use env variable if available
+    port: process.env.DB_PORT || 5432,       // Use env variable if available
+    connectionString: process.env.DATABASE_URL, // This is good, but make sure it uses 'db' too
 });
 
 // ***********************************************************************************
@@ -211,17 +209,20 @@ app.get("/api/add_customers", async (req, res) => {
 
 // Add a new customer
 app.post("/api/add_customers", async (req, res) => {
-  const { first_name,last_name, phone_number, address } = req.body; // Expecting these names from frontend
+  // Ensure 'address' is destructured from req.body
+  const { first_name, last_name, phone_number, address } = req.body; // Good, 'address' is here
+
   if (!first_name || !phone_number) {
     return res
       .status(400)
       .json({ error: "First name and phone number are required." });
   }
+
   try {
     const result = await client.query(
-      `INSERT INTO hp.add_customers (ac_first_name, ac_last_name , ac_phone_number, ac_address, ac_is_active, ac_status, ac_created_date)
-       VALUES ($1, $2, $3, TRUE, 'Active', NOW()) RETURNING *`, // Default to Active on creation
-      [first_name, last_name, phone_number, address]
+      `INSERT INTO hp.add_customers (ac_first_name, ac_last_name, ac_phone_number, ac_address, ac_is_active, ac_status, ac_created_date)
+       VALUES ($1, $2, $3, $4, TRUE, 'Active', NOW()) RETURNING *`, // Added $4 for ac_address
+      [first_name, last_name, phone_number, address] // <--- This array now correctly corresponds to $1, $2, $3, $4
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -1360,7 +1361,7 @@ app.get('/api/Architects', async (req, res) => {
   try {
     const result = await client.query(`
       SELECT ar_id, ar_first_name, ar_last_name, ar_phone_number, ar_location, ar_status
-      FROM HP.manage_architects WHERE ar_is_active = TRUE 
+      FROM HP.manage_architects  
       ORDER BY ar_id DESC
     `);
     res.json(result.rows);
@@ -1477,7 +1478,22 @@ app.get("/", (req, res) => {
 // Project Routes
 // --- Start Server ---
 const PORT = 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend API running on http://localhost:${PORT}`);
 });
+// const PORT = 8080;
+// app.listen(PORT, '0.0.0.0', () => {
+//   console.log(`Backend API running on http://localhost:${PORT}`);
+// });
 
+// Project Routes
+// --- Start Server ---
+// const PORT = 5000;
+// app.listen(PORT, '0.0.0.0', () => {
+//   console.log(`Backend API running on http://localhost:${PORT}`);
+// });
+// const PORT = process.env.PORT || 5000; // Use 5000 as a fallback for local Docker Compose
+
+// app.listen(PORT, '0.0.0.0', () => { // Listen on all network interfaces
+//   console.log(`Backend API running on http://0.0.0.0:${PORT}`);
+// });

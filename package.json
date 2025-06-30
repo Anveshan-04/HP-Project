@@ -1,7 +1,10 @@
+
+
 {
   "name": "Multiple-velzon-thunk",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://anveshan-04.github.io/HP-Project/",  
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^40.2.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
@@ -102,7 +105,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",    
+    "deploy": "gh-pages -d build"      
   },
   "browserslist": {
     "production": [
@@ -124,6 +129,7 @@
     "@types/lodash": "^4.14.195",
     "@types/react-bootstrap-table2-paginator": "^2.1.2",
     "@types/react-bootstrap-table2-toolkit": "^2.1.7",
-    "babel-eslint": "^10.1.0"
+    "babel-eslint": "^10.1.0",
+    "gh-pages": "^6.1.1"              
   }
 }
